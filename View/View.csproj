@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>View</RootNamespace>
     <AssemblyName>View</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -39,13 +39,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Equipment Maintenance.cs">
+    <Compile Include="MachineView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Equipment Maintenance.Designer.cs">
-      <DependentUpon>Equipment Maintenance.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MachineView.cs" />
     <Compile Include="MachineView.Designer.cs">
       <DependentUpon>MachineView.cs</DependentUpon>
     </Compile>
@@ -162,11 +158,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Equipment Maintenance.resx">
-      <DependentUpon>Equipment Maintenance.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MachineView.resx">
       <DependentUpon>MachineView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notice\NoticeBoard.resx">
+      <DependentUpon>NoticeBoard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Standard\CustomerInfo.resx">
       <DependentUpon>CustomerInfo.cs</DependentUpon>
@@ -232,8 +228,6 @@
   <ItemGroup>
     <None Include="Resources\캡처.PNG" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\제목 없음.png" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
