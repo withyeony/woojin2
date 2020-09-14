@@ -501,5 +501,5 @@ namespace View
 				SetAlarm("중복확인이 필요합니다.");
 			}
 		}
-	}
+    }
 }

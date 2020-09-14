@@ -39,12 +39,17 @@ namespace Controller
         {
             return dataBase.GetListMachine(result, value);
         }
-        public List<string> GetDefualtCode(string type)
+        public List<string> GetDefualtMachine(string type)
         {
             List<string> list = null;
 
-            list = dataBase.GetDefaultCodeList(type);
+            list = dataBase.GetDefaultMachineList(type);
             return list;
+        }
+
+        public bool CheckMachine(string type, string value)
+        {
+            return dataBase.CheckMachine(type, value);
         }
     }
 }

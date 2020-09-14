@@ -116,7 +116,10 @@ namespace View
 					break;
 				case "표준 설비":
 					ift = new MachineView(_LoginInfo, this);
-					break; 
+					break;	
+				case "설비 보전 현황":
+					ift = new Equipment_Maintenance(_LoginInfo, this);
+					break;
 			}
 
 			return ift;

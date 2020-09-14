@@ -14,30 +14,29 @@ namespace View
 {
 	public partial class MachineView : Form, IBasicForm
 	{
+		private Member _LoginInfo;
 		private BasicForm _Mother;
 		private Machine _SelectedData;
 		private MachineController _SI;
-
 		private Boolean _NoCheck;
 		private Boolean _IdCheck;
 
 
 		DataTable table = new DataTable();
-		private Member loginInfo;
-		private BasicForm basicForm;
+		//private BasicForm basicForm;
 
 		public MachineView(Member member, BasicForm form)
 		{
 			InitializeComponent();
 			_Mother = form;
-			loginInfo = member;
+			_LoginInfo = member;
 			_SelectedData = new Machine();
 			_SI = new MachineController();
-			InsertData();
+			//InsertData();
 			this.dataGridView1.Font = new Font("Tahoma", 10, FontStyle.Regular);
 
 
-			List<Machine> list = _SI.GetList();
+			/*List<Machine> list = _SI.*/GetList();
 
 			ComboBoxSet();
 			_SelectedData.No = (int)dataGridView1.Rows[0].Cells[0].Value;
@@ -54,7 +53,7 @@ namespace View
 
 		}
 
-		private void InsertData()
+		/*private void InsertData()
 		{
 			List<Machine> list = _SI.GetList();
 			if (list is null)
@@ -70,31 +69,50 @@ namespace View
 				}
 
 			}
-		}
+		}*/
 
 		private void ComboBoxSet()
-		{
-			cb_Add_Useable.Items.Clear();
+		{						
+			cb_Add_Supervisor.Items.Clear();
+			cb_Add_Subordinate.Items.Clear();
 			cb_Add_Manufact.Items.Clear();
-			cb_Update_Useable.Items.Clear();
+			cb_Add_Division.Items.Clear();
 			cb_Update_Manufact.Items.Clear();
+			cb_Update_Division.Items.Clear();
+			cb_Update_Supervisor.Items.Clear();
+			cb_Update_Subordinate.Items.Clear();
 
-			List<String> list = _SI.GetDefualtCode("divisionofmachine");
+
+
+			List<String> list = _SI.GetDefualtMachine("brandofmachine");
 			if (list != null)
 			{
 				foreach (string str in list) { cb_Add_Manufact.Items.Add(str); }
 				foreach (string str in list) { cb_Update_Manufact.Items.Add(str); }
 				list.Clear();
-
 			}
-			list = _SI.GetDefualtCode("brandofmachine");
+			
+			list = _SI.GetDefualtMachine("divisionofmachine");
 			if (list != null)
 			{
-				foreach (string str in list) { cb_Add_Useable.Items.Add(str); }
-				foreach (string str in list) { cb_Update_Useable.Items.Add(str); }
+				foreach (string str in list) { cb_Add_Division.Items.Add(str); }
+				foreach (string str in list) { cb_Update_Division.Items.Add(str); }
 				list.Clear();
 			}
-
+			list = _SI.GetDefualtMachine("supervisorofmachine");
+			if (list != null)
+			{
+				foreach (string str in list) { cb_Add_Supervisor.Items.Add(str); }
+				foreach (string str in list) { cb_Update_Supervisor.Items.Add(str); }
+				list.Clear();
+			}
+			list = _SI.GetDefualtMachine("subordinateofmachine");
+			if (list != null)
+			{
+				foreach (string str in list) { cb_Add_Subordinate.Items.Add(str); }
+				foreach (string str in list) { cb_Update_Subordinate.Items.Add(str); }
+				list.Clear();
+			}
 
 		}
 
@@ -109,46 +127,28 @@ namespace View
 			dataGridView1.AllowUserToResizeRows = false;
 
 			dataGridView1.Rows.Clear();
-			List<Machine> list = new List<Machine>();
-			list = _SI.GetList();
-			if (list is null)
+			List<Machine> machines = new List<Machine>();
+			machines = _SI.GetList();
+			if (machines is null)
 			{
-
+				;
 			}
 			else
 			{
-				foreach (Machine machine in list)
+				foreach (Machine machine in machines)
 				{
 					dataGridView1.Rows.Add(machine.No, machine.Name, machine.Division, machine.Supervisor, machine.Subordinate, machine.Manufact, machine.Buy, machine.IP, machine.Use);
 
 				}
 			}
 		}
-
-		private String DdayCheck(String Longevity)
-		{
-			string value = "";
-			if (Longevity.Equals("0"))
-			{
-				value = Longevity;
-			}
-			else
-			{
-				TimeSpan ts = DateTime.Now - DateTime.Parse(Longevity);
-
-				string str = ts.ToString();
-				string[] spStr = str.Split('.');
-				value = spStr[0];
-			}
-			return value;
-		}
-
 		private void button_GiWon_Click(object sender, EventArgs e)
 		{
 			Button btn = (Button)sender;
 
 			cb_Add_Manufact.SelectedIndex = -1;
-			cb_Add_Useable.SelectedIndex = -1;
+			cb_Add_Supervisor.SelectedIndex = -1;
+			cb_Add_Division.SelectedIndex = -1;
 
 			for (int i = 0; i < this.label_6.Controls.Count; i++)
 			{
@@ -164,13 +164,13 @@ namespace View
 						_NoCheck = false;
 
 						tb_Add_No.ReadOnly = false;
-						tb_Add_Division.ReadOnly = false;
+						//tb_Add_IP.ReadOnly = false;
 
-						tb_Add_Division.Text = "";
+						cb_Add_Division.Text = "";
 						tb_Add_No.Text = "";
-						tb_Add_Subordinate.Text = "";
+						cb_Add_Subordinate.Text = "";
 						tb_Add_Name.Text = "";
-						tb_Add_Supervisor.Text = "";
+						cb_Add_Supervisor.Text = "";
 						tb_Add_IP.Text = "";
 
 						dtp_Add_Buy.Value = DateTime.Now;
@@ -201,7 +201,7 @@ namespace View
 		{
 			if (cb_SelectBox.SelectedIndex == -1)
 			{
-
+				
 			}
 			else
 			{
@@ -212,42 +212,37 @@ namespace View
 				{
 
 					case "번호":
-						result = "type";
+						result = "No";
 						break;
 					case "구분":
-						result = "type";
+						result = "Division";
 						break;
 					case "장비명":
-						result = "type";
+						result = "Name";
 						break;
 					case "관리자(정)":
-						result = "type";
+						result = "Supervisor";
 						break;
 					case "관리자(부)":
-						result = "type";
+						result = "Subordinate";
 						break;
 					case "브랜드명":
-						result = "type";
+						result = "Manufact";
 						break;
 					case "구입일자":
-						result = "type";
+						result = "Buy";
 						break;
 					case "IP":
-						result = "type";
+						result = "IP";
 						break;
 					case "사용유무":
-						result = "type";
+						result = "Useable";
 						break;
 				}
-
-
-
-
 				dataGridView1.Rows.Clear();
 
 				List<Machine> machines = new List<Machine>();
 				machines = _SI.FindDataMachine(result, tb_SelectData.Text);
-
 				if (machines is null)
 				{
 					;
@@ -256,7 +251,7 @@ namespace View
 				{
 					foreach (Machine machine in machines)
 					{
-						dataGridView1.Rows.Add(machine.No, machine.Name, machine.Supervisor, machine.Subordinate, machine.Manufact, machine.Buy, machine.IP, machine.Use);
+						dataGridView1.Rows.Add(machine.No, machine.Name, machine.Division, machine.Supervisor, machine.Subordinate, machine.Manufact, machine.Buy, machine.IP, machine.Use);
 					}
 					btn_Delete_Apply.Visible = false;
 					lbl_DataSelect.Text = "Data Select";
@@ -278,6 +273,13 @@ namespace View
 			}
 		}
 
+		private void tb_SelectData_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Enter)
+			{
+				this.button1_Click_1(sender, e);
+			}
+		}
 
 		private void dataGridView1_CellClick_1(object sender, DataGridViewCellEventArgs e)
 		{
@@ -335,10 +337,10 @@ namespace View
 		private void SetUpdateData()
 		{
 			tb_Update_No.Text = _SelectedData.No.ToString();
-			tb_Update_Division.Text = _SelectedData.Division;
+			cb_Update_Division.Text = _SelectedData.Division;
 			tb_Update_Name.Text = _SelectedData.Name;
-			tb_Update_Supervisor.Text = _SelectedData.Supervisor;
-			tb_Update_Subordinate.Text = _SelectedData.Subordinate;
+			cb_Update_Supervisor.Text = _SelectedData.Supervisor;
+			cb_Update_Subordinate.Text = _SelectedData.Subordinate;
 			cb_Update_Manufact.Text = _SelectedData.Manufact;
 			dtp_Update_Buy.Text = _SelectedData.Buy;
 			tb_Update_IP.Text = _SelectedData.IP;
@@ -358,36 +360,36 @@ namespace View
 		}
 		private void Reset()
 		{
-			tb_Update_No.Text = "";
-			tb_Update_Division.Text = "";
-			tb_Update_Name.Text = "";
-			tb_Update_Supervisor.Text = "";
-			tb_Update_Subordinate.Text = "";
-			cb_Update_Manufact.Text = "";
-			dtp_Update_Buy.Text = "";
-			tb_Update_IP.Text = "";
-			cb_Update_Useable.Text = "";
+			tb_Update_No.Text =				"";
+			cb_Update_Division.Text =		"";
+			tb_Update_Name.Text =			"";
+			cb_Update_Supervisor.Text =		"";
+			cb_Update_Subordinate.Text =	"";
+			cb_Update_Manufact.Text =		"";
+			dtp_Update_Buy.Text =			"";
+			tb_Update_IP.Text =				"";
+			cb_Update_Useable.Text =		"";
 
-			tb_Add_No.Text = "";
-			tb_Add_Division.Text = "";
-			tb_Add_Name.Text = "";
-			tb_Add_Supervisor.Text = "";
-			tb_Add_Subordinate.Text = "";
-			cb_Add_Manufact.Text = "";
-			dtp_Add_Buy.Text = "";
-			tb_Add_IP.Text = "";
-			cb_Add_Useable.Text = "";
+			tb_Add_No.Text =			"";
+			cb_Add_Division.Text =		"";
+			tb_Add_Name.Text =			"";
+			cb_Add_Supervisor.Text =	"";
+			cb_Add_Subordinate.Text =	"";
+			cb_Add_Manufact.Text =		"";
+			dtp_Add_Buy.Text =			"";
+			tb_Add_IP.Text =			"";
+			cb_Add_Useable.Text =		"";
 
 
-			lbl_No.Text = "";
-			lbl_Division.Text = "";
-			lbl_Name.Text = "";
-			lbl_Supervisor.Text = "";
-			lbl_Subordinate.Text = "";
-			lbl_Manufact.Text = "";
-			lbl_Buy.Text = "";
-			lbl_IP.Text = "";
-			lbl_Useable.Text = "";
+			lbl_No.Text =			"";
+			lbl_Division.Text =		"";
+			lbl_Name.Text =			"";
+			lbl_Supervisor.Text =	"";
+			lbl_Subordinate.Text =	"";
+			lbl_Manufact.Text =		"";
+			lbl_Buy.Text =			"";
+			lbl_IP.Text =			"";
+			lbl_Useable.Text =		"";
 
 			_SelectedData.No = (int)dataGridView1.Rows[0].Cells[0].Value;
 			_SelectedData.Name = dataGridView1.Rows[0].Cells[1].Value.ToString();
@@ -437,28 +439,35 @@ namespace View
 			_Mother.RemoveTab(str);
 		}
 
-	
+
 		private void btn_Add_Click(object sender, EventArgs e)
 		{
-			Machine machine = new Machine();
-			machine.No = Convert.ToInt32(tb_Add_No.Text);
-			machine.Division = tb_Add_Division.Text;
-			machine.Name = tb_Add_Name.Text;
-			machine.Supervisor = tb_Add_Supervisor.Text;
-			machine.Subordinate = tb_Add_Subordinate.Text;
-			machine.Manufact = cb_Add_Manufact.SelectedItem.ToString();
-			machine.Buy = dtp_Add_Buy.Text;
-			machine.IP = tb_Add_IP.Text;
-			machine.Use = cb_Add_Useable.SelectedItem.ToString();
+			if (_NoCheck)
+
+			{
+				Machine machine = new Machine();
+				machine.No = Convert.ToInt32(tb_Add_No.Text);
+				machine.Division = cb_Add_Division.Text;
+				machine.Name = tb_Add_Name.Text;
+				machine.Supervisor = cb_Add_Supervisor.Text;
+				machine.Subordinate = cb_Add_Subordinate.Text;
+				machine.Manufact = cb_Add_Manufact.Text;
+				machine.Buy = dtp_Add_Buy.Text;
+				machine.IP = tb_Add_IP.Text;
+				machine.Use = cb_Add_Useable.Text;
 
 
-			_SI.MachineAdd(machine);
-			GetList();
+				_SI.MachineAdd(machine);
 
-
-			dataGridView1.Rows.Clear();
-			Reset();
-			SetAlarm("설비 정보 추가가 완료 되었습니다.");
+				GetList();
+				Reset();
+				DataPanelReset();
+				SetAlarm("설비 정보 추가가 완료 되었습니다.");
+			}
+            else
+            {
+			SetAlarm("중복확인이 필요합니다.");
+			}
 		}
 
 		private void btn_Update_Click(object sender, EventArgs e)
@@ -466,20 +475,21 @@ namespace View
 			Machine machine = new Machine();
 
 			machine.No = Convert.ToInt32(tb_Update_No.Text);
-			machine.Division = tb_Update_Division.Text;
+			machine.Division = cb_Update_Division.Text;
 			machine.Name = tb_Update_Name.Text;
-			machine.Supervisor = tb_Update_Supervisor.Text;
-			machine.Subordinate = tb_Update_Subordinate.Text;
-			machine.Manufact = cb_Update_Manufact.SelectedItem.ToString();
+			machine.Supervisor = cb_Update_Supervisor.Text;
+			machine.Subordinate = cb_Update_Subordinate.Text;
+			machine.Manufact = cb_Update_Manufact.Text;
 			machine.Buy = dtp_Update_Buy.Text;
 			machine.IP = tb_Update_IP.Text;
-			machine.Use = cb_Update_Useable.SelectedItem.ToString();
+			machine.Use = cb_Update_Useable.Text;
 
 
 			_SI.UpdateMachine(machine);
 
 			GetList();
 			Reset();
+			DataPanelReset();
 			SetAlarm("설비 정보 수정이 완료 되었습니다.");
 		}
 
@@ -489,7 +499,23 @@ namespace View
 
 			GetList();
 			Reset();
+			DataPanelReset();
 			SetAlarm("설비 정보 삭제가 완료 되었습니다.");
 		}
-	}
+		private void button7_Click(object sender, EventArgs e)
+		{
+			if (tb_Add_No.Text.Length > 0)
+			{
+				_NoCheck = _SI.CheckMachine("No", tb_Add_No.Text);
+				String str = "이미 존재하는 번호 입니다.";
+				if (_NoCheck)
+				{
+					tb_Add_No.ReadOnly = true;
+					str = "사용가능한 번호입니다.";
+				}
+				SetAlarm(str);
+			}
+
+		}
+    }
 }
