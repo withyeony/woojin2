@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Controller</RootNamespace>
     <AssemblyName>Controller</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -51,10 +51,10 @@
   <ItemGroup>
     <Compile Include="FormController\CustomerController.cs" />
     <Compile Include="FormController\DefaultCodeController.cs" />
+    <Compile Include="FormController\EquipmentController.cs" />
     <Compile Include="FormController\LoginFormCtl.cs" />
     <Compile Include="FormController\MachineController.cs" />
     <Compile Include="FormController\MemberController.cs" />
-    <Compile Include="FormController\PartController.cs" />
     <Compile Include="FormController\ProcessController.cs" />
     <Compile Include="FormController\ProductController.cs" />
     <Compile Include="FormController\StandardProcessController.cs" />
@@ -66,7 +66,6 @@
     <Compile Include="FormInterFace\IProductForm.cs" />
     <Compile Include="FormController\NoticeController.cs" />
     <Compile Include="OrderController.cs" />
-    <Compile Include="ProducinController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
