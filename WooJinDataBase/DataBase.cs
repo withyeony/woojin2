@@ -17,236 +17,6 @@ namespace WooJinDataBase
 		private string ServerAddress = "server=localhost;user=root;database=woojin;password=root;" +
 										"CharSet = utf8;";
 
-		public void AddPartData(ProductItem selectData)
-		{
-			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
-			{
-				MySqlCommand cmd = new MySqlCommand();
-
-				try
-				{
-					cmd.CommandText = "INSERT INTO productitem ( `Division`, `Part`, `Code`, `Name`, `EName`) " +
-						"VALUES( @Division, @Part, @Code, @Name, @EName)";
-
-					//cmd.Parameters.Add("@No", MySqlDbType.Int32, 11, "No");
-					cmd.Parameters.Add("@Division", MySqlDbType.VarChar, 50, "Division");
-					cmd.Parameters.Add("@Part", MySqlDbType.VarChar, 50, "Part");
-					cmd.Parameters.Add("@Code", MySqlDbType.VarChar, 50, "Code");
-					cmd.Parameters.Add("@Name", MySqlDbType.VarChar, 50, "Name");
-					cmd.Parameters.Add("@EName", MySqlDbType.VarChar, 50, "EName");
-
-					//cmd.Parameters["@No"].Value = selectData.No;
-					cmd.Parameters["@Division"].Value = selectData.Division;
-					cmd.Parameters["@Part"].Value = selectData.Part;
-					cmd.Parameters["@Code"].Value = selectData.Code;
-					cmd.Parameters["@Name"].Value = selectData.Name;
-					cmd.Parameters["@EName"].Value = selectData.EName;
-
-
-					cmd.Connection = conn;
-
-					if (conn.State == ConnectionState.Open) conn.Close();
-					conn.Open();
-
-					cmd.ExecuteNonQuery();
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e.ToString());
-				}
-			}
-		}
-
-		public void ModifyPartData(ProductItem selectData)
-		{
-			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
-			{
-				MySqlCommand cmd = new MySqlCommand();
-				cmd.CommandType = CommandType.Text;
-				cmd.CommandText = "UPDATE productitem SET Division=@Division, Part=@Part, Code=@Code, Name=@Name, EName=@EName WHERE No = @No";
-
-				cmd.Parameters.Add("@No", MySqlDbType.Int32, 11, "No");
-				cmd.Parameters.Add("@Division", MySqlDbType.VarChar, 50, "Division");
-				cmd.Parameters.Add("@Part", MySqlDbType.VarChar, 50, "Part");
-				cmd.Parameters.Add("@Code", MySqlDbType.VarChar, 50, "Code");
-				cmd.Parameters.Add("@Name", MySqlDbType.VarChar, 50, "Name");
-				cmd.Parameters.Add("@EName", MySqlDbType.VarChar, 50, "EName");
-
-				cmd.Parameters["@No"].Value = selectData.No;
-				cmd.Parameters["@Division"].Value = selectData.Division;
-				cmd.Parameters["@Part"].Value = selectData.Part;
-				cmd.Parameters["@Code"].Value = selectData.Code;
-				cmd.Parameters["@Name"].Value = selectData.Name;
-				cmd.Parameters["@EName"].Value = selectData.EName;
-
-				cmd.Connection = conn;
-
-				if (conn.State == ConnectionState.Open) conn.Close();
-				conn.Open();
-
-				cmd.ExecuteNonQuery();
-			}
-		}
-
-		public void DeletePartData(ProductItem selectData)
-		{
-			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
-			{
-				MySqlCommand cmd = new MySqlCommand();
-				cmd.CommandType = CommandType.Text;
-				cmd.CommandText = "DELETE FROM productitem WHERE No = @No";
-
-				cmd.Parameters.Add("@No", MySqlDbType.Int32, 11, "No");
-
-				cmd.Parameters["@No"].Value = selectData.No;
-
-				cmd.Connection = conn;
-
-				if (conn.State == ConnectionState.Open) conn.Close();
-				conn.Open();
-
-				cmd.ExecuteNonQuery();
-			}
-		}
-
-		public List<GroupOfProduct> ProductComboboxListAdd2()
-		{
-			List<GroupOfProduct> GrpProducts = new List<GroupOfProduct>();
-			
-			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
-			{
-
-				MySqlCommand cmd = new MySqlCommand();
-				cmd.CommandText = "SELECT * FROM groupofproduct";
-
-				try
-				{
-					cmd.Connection = conn;
-					conn.Open();
-					int check = Convert.ToInt32(cmd.ExecuteScalar());
-
-					if (check != 0)
-					{
-						MySqlDataReader rdr = cmd.ExecuteReader();
-
-						while (rdr.Read())
-						{
-							GroupOfProduct GrpProduct = new GroupOfProduct
-							{
-								No = (int)rdr[0],
-								Type = rdr[1].ToString(),
-								Sort = rdr[2].ToString()
-							};
-
-							GrpProducts.Add(GrpProduct);
-						}
-					}
-					else
-					{
-						return null;
-					}
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e.Message);
-				}
-			}
-
-			return GrpProducts;
-		}
-
-		public List<DivisionOfProduct> ProductComboboxListAdd1()
-		{
-			List<DivisionOfProduct> DvsProducts = new List<DivisionOfProduct>();
-
-			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
-			{
-
-				MySqlCommand cmd = new MySqlCommand();
-				cmd.CommandText = "SELECT * FROM divisionofproduct";
-
-				try
-				{
-					cmd.Connection = conn;
-					conn.Open();
-					int check = Convert.ToInt32(cmd.ExecuteScalar());
-
-					if (check != 0)
-					{
-						MySqlDataReader rdr = cmd.ExecuteReader();
-
-						while (rdr.Read())
-						{
-							DivisionOfProduct DvsProduct = new DivisionOfProduct
-							{
-								No = (int)rdr[0],
-								Type = rdr[1].ToString(),
-								Sort = rdr[2].ToString()
-							};
-
-							DvsProducts.Add(DvsProduct);
-						}
-					}
-					else
-					{
-						return null;
-					}
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e.Message);
-				}
-			}
-
-			return DvsProducts;
-		}
-
-		public List<ProductItem> GetDgvPart()
-		{
-			List<ProductItem> productItems = new List<ProductItem>();
-
-			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
-			{
-				MySqlCommand cmd = new MySqlCommand();
-				cmd.CommandText = "SELECT * FROM ProductItem";
-
-				try
-				{
-					cmd.Connection = conn;
-					conn.Open();
-					int check = Convert.ToInt32(cmd.ExecuteScalar());
-
-					if (check != 0)
-					{
-						MySqlDataReader rdr = cmd.ExecuteReader();
-
-						while (rdr.Read())
-						{
-							ProductItem productItem = new ProductItem();
-							productItem.No = (int)rdr[0];
-							productItem.Division = rdr[1].ToString();
-							productItem.Part = rdr[2].ToString();
-							productItem.Code = rdr[3].ToString();
-							productItem.Name = rdr[4].ToString();
-							productItem.EName = rdr[5].ToString();
-
-							productItems.Add(productItem);
-						}
-					}
-					else
-					{
-						return null;
-					}
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e.Message);
-				}
-			}
-
-			return productItems;
-		}
-
 		public List<Machine> GetListMachine(string result, string value)
 		{
 			List<Machine> machines = new List<Machine>();
@@ -273,17 +43,17 @@ namespace WooJinDataBase
 
 						while (rdr.Read())
 						{
-							Machine machine = new Machine
+							Machine machine = new Machine();
 							{
-								No = (int)rdr[0],
-								Division = rdr[1].ToString(),
-								Name = rdr[2].ToString(),
-								Supervisor = rdr[3].ToString(),
-								Subordinate = rdr[4].ToString(),
-								Manufact = rdr[5].ToString(),
-								Buy = rdr[6].ToString(),
-								IP = rdr[7].ToString(),
-								Use = rdr[8].ToString()
+								machine.No = (int)rdr[0];
+								machine.Name = rdr[1].ToString();
+								machine.Division = rdr[2].ToString();
+								machine.Supervisor = rdr[3].ToString();
+								machine.Subordinate = rdr[4].ToString();
+								machine.Manufact = rdr[5].ToString();
+								machine.Buy = rdr[6].ToString();
+								machine.IP = rdr[7].ToString();
+								machine.Use = rdr[8].ToString();
 							};
 
 							machines.Add(machine);
@@ -303,222 +73,15 @@ namespace WooJinDataBase
 			return machines;
 		}
 
-		public void AddCustomerData(Customer selectData)
-		{
-			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
-			{
-				MySqlCommand cmd = new MySqlCommand();
-
-				try
-				{
-					cmd.CommandText = "INSERT INTO customer (`No`, `CGroup`, `Name`, `CEO`, `Address`, `Number`, `Fax`, `Transaction`) " +
-						"VALUES (@No, @CGroup, @Name, @CEO, @Address, @Number, @Fax, @Transaction);";
-
-					cmd.Parameters.Add("@No", MySqlDbType.Int32, 11, "No");
-					cmd.Parameters.Add("@CGroup", MySqlDbType.VarChar, 50, "CGroup");
-					cmd.Parameters.Add("@Name", MySqlDbType.VarChar, 50, "Name");
-					cmd.Parameters.Add("@CEO", MySqlDbType.VarChar, 50, "CEO");
-					cmd.Parameters.Add("@Address", MySqlDbType.VarChar, 50, "Address");
-					cmd.Parameters.Add("@Number", MySqlDbType.VarChar, 50, "Number");
-					cmd.Parameters.Add("@Fax", MySqlDbType.VarChar, 50, "Fax");
-					cmd.Parameters.Add("@Transaction", MySqlDbType.VarChar, 50, "Transaction");
-
-					cmd.Parameters["@No"].Value = selectData.No;
-					cmd.Parameters["@CGroup"].Value = selectData.CGroup;
-					cmd.Parameters["@Name"].Value = selectData.Name;
-					cmd.Parameters["@CEO"].Value = selectData.CEO;
-					cmd.Parameters["@Address"].Value = selectData.Address;
-					cmd.Parameters["@Number"].Value = selectData.Number;
-					cmd.Parameters["@Fax"].Value = selectData.Fax;
-					cmd.Parameters["@Transaction"].Value = selectData.Transaction;
-
-
-					cmd.Connection = conn;
-
-					if (conn.State == ConnectionState.Open) conn.Close();
-					conn.Open();
-
-					cmd.ExecuteNonQuery();
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e.ToString());
-				}
-			}
-		}
-
-		public void ModifyCustomerData(Customer selectData)
-		{
-			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
-			{
-				MySqlCommand cmd = new MySqlCommand();
-				cmd.CommandType = CommandType.Text;
-				cmd.CommandText = "UPDATE customer SET CGroup=@CGroup, Name=@NAME, CEO=@CEO, Address=@Address, Number=@NUMBER, Fax=@Fax, Transaction=@Transaction WHERE No = @No";
-
-				cmd.Parameters.Add("@No", MySqlDbType.Int32, 11, "No");
-				cmd.Parameters.Add("@CGroup", MySqlDbType.VarChar, 50, "CGroup");
-				cmd.Parameters.Add("@Name", MySqlDbType.VarChar, 50, "Name");
-				cmd.Parameters.Add("@CEO", MySqlDbType.VarChar, 50, "CEO");
-				cmd.Parameters.Add("@Address", MySqlDbType.VarChar, 50, "Address");
-				cmd.Parameters.Add("@Number", MySqlDbType.VarChar, 50, "Number");
-				cmd.Parameters.Add("@Fax", MySqlDbType.VarChar, 50, "Fax");
-				cmd.Parameters.Add("@Transaction", MySqlDbType.VarChar, 50, "Transaction");
-
-				cmd.Parameters["@No"].Value = selectData.No;
-				cmd.Parameters["@CGroup"].Value = selectData.CGroup;
-				cmd.Parameters["@Name"].Value = selectData.Name;
-				cmd.Parameters["@CEO"].Value = selectData.CEO;
-				cmd.Parameters["@Address"].Value = selectData.Address;
-				cmd.Parameters["@Number"].Value = selectData.Number;
-				cmd.Parameters["@Fax"].Value = selectData.Fax;
-				cmd.Parameters["@Transaction"].Value = selectData.Transaction;
-
-				cmd.Connection = conn;
-
-				if (conn.State == ConnectionState.Open) conn.Close();
-				conn.Open();
-
-				cmd.ExecuteNonQuery();
-
-			}
-		}
-
-		public void DeleteCustomerData(Customer selectData)
-		{
-			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
-			{
-				MySqlCommand cmd = new MySqlCommand();
-				cmd.CommandType = CommandType.Text;
-				cmd.CommandText = "DELETE FROM customer WHERE No = @No";
-
-				cmd.Parameters.Add("@No", MySqlDbType.Int32, 11, "No");
-
-				cmd.Parameters["@No"].Value = selectData.No;
-
-				cmd.Connection = conn;
-
-				if (conn.State == ConnectionState.Open) conn.Close();
-				conn.Open();
-
-				cmd.ExecuteNonQuery();
-
-			}
-		}
-
-		public void AddCustomerMemberData(CustomerMember selectData)
-		{
-			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
-			{
-				MySqlCommand cmd = new MySqlCommand();
-
-				try
-				{
-					cmd.CommandText = "INSERT INTO customermember (`No`, `Name`, `Part`, `Rank`, `Number`, `Fax`, `Email`, `ETC`) " +
-						"VALUES (@No, @Name, @Part, @Rank, @Number, @Fax, @Email, @ETC);";
-
-					cmd.Parameters.Add("@No", MySqlDbType.Int32, 11, "No");
-					cmd.Parameters.Add("@Name", MySqlDbType.VarChar, 50, "Name");
-					cmd.Parameters.Add("@Part", MySqlDbType.VarChar, 50, "Part");
-					cmd.Parameters.Add("@Rank", MySqlDbType.VarChar, 50, "Rank");
-					cmd.Parameters.Add("@Number", MySqlDbType.VarChar, 50, "Number");
-					cmd.Parameters.Add("@Fax", MySqlDbType.VarChar, 50, "Fax");
-					cmd.Parameters.Add("@Email", MySqlDbType.VarChar, 50, "Email");
-					cmd.Parameters.Add("@ETC", MySqlDbType.VarChar, 50, "ETC");
-
-					cmd.Parameters["@No"].Value = selectData.No;
-					cmd.Parameters["@Name"].Value = selectData.Name;
-					cmd.Parameters["@Part"].Value = selectData.Part;
-					cmd.Parameters["@Rank"].Value = selectData.Rank;
-					cmd.Parameters["@Number"].Value = selectData.Number;
-					cmd.Parameters["@Fax"].Value = selectData.Fax;
-					cmd.Parameters["@Email"].Value = selectData.Email;
-					cmd.Parameters["@ETC"].Value = selectData.ETC;
-
-
-					cmd.Connection = conn;
-
-					if (conn.State == ConnectionState.Open) conn.Close();
-					conn.Open();
-
-					cmd.ExecuteNonQuery();
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e.ToString());
-				}
-			}
-		}
-
-		public void ModifyCustomerMemberData(CustomerMember selectData)
-		{
-			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
-			{
-				MySqlCommand cmd = new MySqlCommand();
-				cmd.CommandType = CommandType.Text;
-				cmd.CommandText = "UPDATE customermember SET Name=@Name, Part=@Part, Rank=@Rank, " +
-					"Number=@Number, Fax=@Fax, Email=@Email, ETC=@ETC WHERE No = @No AND Name=@Name AND Number=@Number ";
-
-				cmd.Parameters.Add("@No", MySqlDbType.Int32, 11, "No");
-				cmd.Parameters.Add("@Name", MySqlDbType.VarChar, 50, "Name");
-				cmd.Parameters.Add("@Part", MySqlDbType.VarChar, 50, "Part");
-				cmd.Parameters.Add("@Rank", MySqlDbType.VarChar, 50, "Rank");
-				cmd.Parameters.Add("@Number", MySqlDbType.VarChar, 50, "Number");
-				cmd.Parameters.Add("@Fax", MySqlDbType.VarChar, 50, "Fax");
-				cmd.Parameters.Add("@Email", MySqlDbType.VarChar, 50, "Email");
-				cmd.Parameters.Add("@ETC", MySqlDbType.VarChar, 50, "ETC");
-
-				cmd.Parameters["@No"].Value = selectData.No;
-				cmd.Parameters["@Name"].Value = selectData.Name;
-				cmd.Parameters["@Part"].Value = selectData.Part;
-				cmd.Parameters["@Rank"].Value = selectData.Rank;
-				cmd.Parameters["@Number"].Value = selectData.Number;
-				cmd.Parameters["@Fax"].Value = selectData.Fax;
-				cmd.Parameters["@Email"].Value = selectData.Email;
-				cmd.Parameters["@ETC"].Value = selectData.ETC;
-
-				cmd.Connection = conn;
-
-				if (conn.State == ConnectionState.Open) conn.Close();
-				conn.Open();
-
-				cmd.ExecuteNonQuery();
-
-			}
-		}
-
-		public void DeleteCustomerMemberData(CustomerMember selectData)
-		{
-			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
-			{
-				MySqlCommand cmd = new MySqlCommand();
-				cmd.CommandType = CommandType.Text;
-				cmd.CommandText = "DELETE FROM customermember WHERE No = @No AND StaticNo=@StaticNo";
-
-				cmd.Parameters.Add("@No", MySqlDbType.Int32, 11, "No");
-				cmd.Parameters.Add("@StaticNo", MySqlDbType.Int32, 11, "StaticNo");
-
-				cmd.Parameters["@No"].Value = selectData.No;
-				cmd.Parameters["@StaticNo"].Value = selectData.StaticNo;
-
-				cmd.Connection = conn;
-
-				if (conn.State == ConnectionState.Open) conn.Close();
-				conn.Open();
-
-				cmd.ExecuteNonQuery();
-
-			}
-		}
-
-		public List<Customer> CompanyComboboxListAdd()
+        public object GetListEquipment()
         {
-			List<Customer> customers = new List<Customer>();
+			List<Equipment> equipments = new List<Equipment>();
 
 			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
 			{
 
 				MySqlCommand cmd = new MySqlCommand();
-				cmd.CommandText = "SELECT * FROM Customer";
+				cmd.CommandText = "SELECT * FROM equipment";
 
 				try
 				{
@@ -528,18 +91,24 @@ namespace WooJinDataBase
 
 					if (check != 0)
 					{
+						cmd.CommandText = "SELECT * FROM equipment";
+						cmd.Connection = conn;
 						MySqlDataReader rdr = cmd.ExecuteReader();
 
 						while (rdr.Read())
 						{
-							Customer customer = new Customer
+							Equipment equipment = new Equipment();
 							{
-								No = (int)rdr[0],
-								CGroup = rdr[1].ToString(),
-								Transaction = rdr[7].ToString()
+								equipment.No = (int)rdr[0];
+								equipment.Name = rdr[1].ToString();
+								equipment.Supervisor = rdr[2].ToString();
+								equipment.Useable = rdr[3].ToString();
+								equipment.day = rdr[4].ToString();
+								equipment.Check = rdr[5].ToString();
+								equipment.Inspector = rdr[6].ToString();
 							};
 
-							customers.Add(customer);
+							equipments.Add(equipment);
 						}
 					}
 					else
@@ -553,10 +122,51 @@ namespace WooJinDataBase
 				}
 			}
 
-			return customers;
+			return equipments;
 		}
 
-        public void MachineAdd(Machine machine)
+        public List<string> GetDefaultMachineList(string type)
+		{
+			List<String> list = new List<string>();
+			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
+			{
+
+				MySqlCommand cmd = new MySqlCommand();
+				cmd.CommandText = "SELECT count(*) FROM " + type;
+				try
+				{
+					cmd.Connection = conn;
+					conn.Open();
+
+					int check = Convert.ToInt32(cmd.ExecuteScalar());
+
+					if (check != 0)
+					{
+						cmd.CommandText = "SELECT type FROM " + type + " Order By Sort";
+						cmd.Connection = conn;
+
+						MySqlDataReader rdr = cmd.ExecuteReader();
+
+						while (rdr.Read())
+						{
+							list.Add(rdr[0].ToString());
+						}
+					}
+					else
+					{
+						return null;
+					}
+
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.Message);
+				}
+			}
+			return list;
+		}
+
+		public void MachineAdd(Machine machine)
 		{
 			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
 			{
@@ -564,9 +174,10 @@ namespace WooJinDataBase
 				MySqlCommand cmd = new MySqlCommand();
 				cmd.CommandType = CommandType.Text;
 
-				cmd.CommandText = "INSERT INTO machine (Name, Supervisor, Subordinate, Manufact, Buy, IP, Useable) "
-					+ "VALUES(@Name, @Division, @Supervisor, @Subordinate, @Manufact, @Buy, @IP, @Useable)";
+				cmd.CommandText = "INSERT INTO machine (No, Name, Division, Supervisor, Subordinate, Manufact, Buy, IP, Useable) "
+					+ "VALUES(@No, @Name, @Division, @Supervisor, @Subordinate, @Manufact, @Buy, @IP, @Useable)";
 
+				cmd.Parameters.Add("@No", MySqlDbType.VarChar, 50, "No");
 				cmd.Parameters.Add("@Name", MySqlDbType.VarChar, 50, "Name");
 				cmd.Parameters.Add("@Division", MySqlDbType.VarChar, 50, "Division");
 				cmd.Parameters.Add("@Supervisor", MySqlDbType.VarChar, 50, "Supervisor");
@@ -576,7 +187,7 @@ namespace WooJinDataBase
 				cmd.Parameters.Add("@IP", MySqlDbType.VarChar, 50, "IP");
 				cmd.Parameters.Add("@Useable", MySqlDbType.VarChar, 50, "Useable");
 
-				cmd.Parameters["@no"].Value = machine.No;
+				cmd.Parameters["@No"].Value = machine.No;
 				cmd.Parameters["@name"].Value = machine.Name;
 				cmd.Parameters["@Division"].Value = machine.Division;
 				cmd.Parameters["@supervisor"].Value = machine.Supervisor;
@@ -614,21 +225,23 @@ namespace WooJinDataBase
 
 					if (check != 0)
 					{
+						cmd.CommandText = "SELECT * FROM machine";
+						cmd.Connection = conn;
 						MySqlDataReader rdr = cmd.ExecuteReader();
 
 						while (rdr.Read())
 						{
-							Machine machine = new Machine
+							Machine machine = new Machine();
 							{
-								No = (int)rdr[0],
-								Division = rdr[1].ToString(),
-								Name = rdr[2].ToString(),
-								Supervisor = rdr[3].ToString(),
-								Subordinate = rdr[4].ToString(),
-								Manufact = rdr[5].ToString(),
-								Buy = rdr[6].ToString(),
-								IP = rdr[7].ToString(),
-								Use = rdr[8].ToString()
+								machine.No = (int)rdr[0];
+								machine.Name = rdr[1].ToString();
+								machine.Division = rdr[2].ToString();
+								machine.Supervisor = rdr[3].ToString();
+								machine.Subordinate = rdr[4].ToString();
+								machine.Manufact = rdr[5].ToString();
+								machine.Buy = rdr[6].ToString();
+								machine.IP = rdr[7].ToString();
+								machine.Use = rdr[8].ToString();
 							};
 
 							machines.Add(machine);
@@ -712,10 +325,10 @@ namespace WooJinDataBase
 						{
 							Customer customer = new Customer();
 							customer.No = (int)rdr[0];
-							customer.CGroup = rdr[1].ToString();
-							customer.Name = rdr[2].ToString();
-							customer.CEO = rdr[3].ToString();
-							customer.Address = rdr[4].ToString();
+							customer.CEO = rdr[1].ToString();
+							customer.Group = rdr[2].ToString();
+							customer.Name = rdr[3].ToString();
+							customer.Adress = rdr[4].ToString();
 							customer.Number = rdr[5].ToString();
 							customer.Fax = rdr[6].ToString();
 							customer.Transaction = rdr[7].ToString();
@@ -1018,6 +631,33 @@ namespace WooJinDataBase
 
 				MySqlCommand cmd = new MySqlCommand();
 				cmd.CommandText = "SELECT count(*) FROM Member where " + type + " = "+value;
+
+				try
+				{
+					cmd.Connection = conn;
+					conn.Open();
+					int check = Convert.ToInt32(cmd.ExecuteScalar());
+
+					if (check == 0)
+					{
+						result = true;
+					}
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.ToString());
+				}
+			}
+			return result;
+		}
+		public bool CheckMachine(string type, string value)
+		{
+			bool result = false;
+			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
+			{
+
+				MySqlCommand cmd = new MySqlCommand();
+				cmd.CommandText = "SELECT count(*) FROM machine where " + type + " = " + value;
 
 				try
 				{
@@ -2444,7 +2084,7 @@ namespace WooJinDataBase
 					while (rdr.Read())
 					{
 						customer.No = (int)rdr[0];
-						customer.CGroup = rdr[2].ToString();
+						customer.Group = rdr[2].ToString();
 						customer.Name = rdr[3].ToString();
 						customer.CEO = rdr[4].ToString();
 						customer.Number = rdr[5].ToString();
@@ -2835,13 +2475,13 @@ namespace WooJinDataBase
 		}
 		public List<Customer> CustomerGetSelete(string result, string value)
 		{
-			List<Customer> customers = new List<Customer>();
+			List<Customer> notices = new List<Customer>();
 
 			using (MySqlConnection conn = new MySqlConnection(ServerAddress))
 			{
 
 				MySqlCommand cmd = new MySqlCommand();
-				cmd.CommandText = "SELECT count(*) FROM customer";
+				cmd.CommandText = "SELECT count(*) FROM Notice";
 
 				try
 				{
@@ -2851,7 +2491,7 @@ namespace WooJinDataBase
 
 					if (check != 0)
 					{
-						cmd.CommandText = "SELECT * FROM customer where " + result + " LIKE " + "'%" + value + "%'";
+						cmd.CommandText = "SELECT * FROM Notice where " + result + " LIKE " + "'%" + value + "%'";
 
 						cmd.Connection = conn;
 
@@ -2859,18 +2499,15 @@ namespace WooJinDataBase
 
 						while (rdr.Read())
 						{
-							Customer customer = new Customer();
+							Customer notice = new Customer();
 
-							customer.No = (int)rdr[0];
-							customer.CGroup = rdr[1].ToString();
-							customer.Name = rdr[2].ToString();
-							customer.CEO = rdr[3].ToString();
-							customer.Address = rdr[4].ToString();
-							customer.Number = rdr[5].ToString();
-							customer.Fax = rdr[6].ToString();
-							customer.Transaction = rdr[7].ToString();
+							//notice.No = (int)rdr[0];
+							//notice.Name = rdr[1].ToString();
+							//notice.Title = rdr[2].ToString();
+							//notice.Content = rdr[3].ToString();
+							//notice.Date = rdr[4].ToString();
 
-							customers.Add(customer);
+							notices.Add(notice);
 						}
 					}
 					else
@@ -2884,7 +2521,7 @@ namespace WooJinDataBase
 				}
 			}
 
-			return customers;
+			return notices;
 		}
 		public List<CustomerMember> GetCustomerMembers(int no)
 		{
@@ -2921,7 +2558,6 @@ namespace WooJinDataBase
 							cm.Fax = rdr[5].ToString();
 							cm.Email = rdr[6].ToString();
 							cm.ETC = rdr[7].ToString();
-							cm.StaticNo = (int)rdr[8];
 
 							cms.Add(cm);
 						}
@@ -2950,6 +2586,8 @@ namespace WooJinDataBase
 
 				cmd.CommandText = "INSERT INTO customerMember (no, name, part, rank, number, fax, email, etc) "
 					+ "VALUES(@no, @name, @part, @rank, @number, @fax, @email, @etc)";
+
+
 
 				cmd.Parameters.Add("@no", MySqlDbType.VarChar, 50, "no");
 				cmd.Parameters.Add("@name", MySqlDbType.VarChar, 50, "name");
@@ -3187,7 +2825,7 @@ namespace WooJinDataBase
 				cmd.Parameters.Add("@Transaction", MySqlDbType.VarChar, 50, "Transaction");
 
 				cmd.Parameters["@no"].Value = customer.No;
-				cmd.Parameters["@group"].Value = customer.CGroup;
+				cmd.Parameters["@group"].Value = customer.Group;
 				cmd.Parameters["@name"].Value = customer.Name;
 				cmd.Parameters["@ceo"].Value = customer.CEO;
 				cmd.Parameters["@number"].Value = customer.Number;
@@ -3573,10 +3211,12 @@ namespace WooJinDataBase
 				MySqlCommand cmd = new MySqlCommand();
 				cmd.CommandType = CommandType.Text;
 
-				cmd.CommandText = "INSERT INTO machine (Name, Supervisor, Subordinate, Manufact, Buy, IP, Useable) "
-					+ "VALUES(@Name, @Supervisor, @Subordinate, @Manufact, @Buy, @IP, @Useable)";
+				cmd.CommandText = "INSERT INTO machine (No, Name, Division, Supervisor, Subordinate, Manufact, Buy, IP, Useable) "
+					+ "VALUES(@no, @Name, @Division, @Supervisor, @Subordinate, @Manufact, @Buy, @IP, @Useable)";
 
+				cmd.Parameters.Add("@No", MySqlDbType.VarChar, 50, "No");
 				cmd.Parameters.Add("@Name", MySqlDbType.VarChar, 50, "Name");
+				cmd.Parameters.Add("@Division", MySqlDbType.VarChar, 50, "Division");
 				cmd.Parameters.Add("@Supervisor", MySqlDbType.VarChar, 50, "Supervisor");
 				cmd.Parameters.Add("@Subordinate", MySqlDbType.VarChar, 50, "Subordinate");
 				cmd.Parameters.Add("@Manufact", MySqlDbType.VarChar, 50, "Manufact");
@@ -3584,7 +3224,9 @@ namespace WooJinDataBase
 				cmd.Parameters.Add("@IP", MySqlDbType.VarChar, 50, "IP");
 				cmd.Parameters.Add("@Useable", MySqlDbType.VarChar, 50, "Useable");
 
+				cmd.Parameters["@No"].Value = machine.No;
 				cmd.Parameters["@Name"].Value = machine.Name;
+				cmd.Parameters["@Division"].Value = machine.Division;
 				cmd.Parameters["@Supervisor"].Value = machine.Supervisor;
 				cmd.Parameters["@Subordinate"].Value = machine.Subordinate;
 				cmd.Parameters["@Manufact"].Value = machine.Manufact;
@@ -3713,7 +3355,7 @@ namespace WooJinDataBase
 						{
 							Customer customer = new Customer();
 							customer.No = (int)rdr[0];
-							customer.CGroup = rdr[2].ToString();
+							customer.Group = rdr[2].ToString();
 							customer.Name = rdr[3].ToString();
 							customer.CEO = rdr[4].ToString();
 							customer.Number = rdr[5].ToString();
